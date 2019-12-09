@@ -2,8 +2,12 @@
 
 data("iris")
 ### 1. Data exploration
-
 ## 1.1
+
+
+setosa <- iris$Sepal.Length[iris$Species == "setosa"]
+versicolor <- iris$Sepal.Length[iris$Species == "versicolor"]
+virginica <- iris$Sepal.Length[iris$Species == "virginica"]
 sl = iris[["Sepal.Length"]] #Numeric
 sw = iris[["Sepal.Width"]]  #Numeric
 pl = iris[["Petal.Length"]] #Numeric
@@ -56,12 +60,34 @@ hist(pw)
 
 ## 2.7
 # Histogram for each numeric variable per species
-# install install.packages("ggplot2")
+#install.packages("ggplot2")
+library(ggplot2); library(GGally)
+
 qplot(x = Sepal.Width,
       data = iris,
       binwidth = 0.2,
       fill = Species,
       xlab = "Sepal Width (cm)")
+
+qplot(x = Sepal.Length,
+      data = iris,
+      binwidth = 0.2,
+      fill = Species,
+      xlab = "Sepal Length (cm)")
+
+qplot(x = Petal.Width,
+      data = iris,
+      binwidth = 0.2,
+      fill = Species,
+      xlab = "Petal Width (cm)")
+
+qplot(x = Petal.Length,
+      data = iris,
+      binwidth = 0.2,
+      fill = Species,
+      xlab = "Petal Length(cm)")
+
+ggpairs(iris)
 
 ## 2.8
 # Plot and Sunflowerplot 
@@ -78,8 +104,43 @@ pairs(iris[1:5], main = "Edgar Anderson's Iris Data", pch = 21, bg = c("red", "g
 # some overlap (almost linearly separable).
 
 ### 3. Regression Analysis
-## 2.10
+## 3.10
 # Khi_Square
-linearMod <- lm( ~ Species, data=iris)  # build linear regression model on full data
-print(linearMod)
+#https://svaditya.github.io/oldblog/chi_square_and_t_tests_on_iris_data.html
+#https://tobiasrausch.com/courses/ml2019/dataExploration.html
+chisqmatrix <- function(x) {
+   names = colnames(x);  num = length(names)
+   m = matrix(nrow=num,ncol=num,dimnames=list(names,names))
+   for (i in 1:(num-1)) {
+      for (j in (i+1):num) {
+         m[i,j] = chisq.test(x[,i],x[,j],)$p.value
+      }
+   }
+   return (m)
+}
+chisq_iris = chisqmatrix(iris)
+chisq_iris
+
+
+
+#https://warwick.ac.uk/fac/sci/moac/people/students/peter_cock/r/iris_lm/
+# Linear Model
+lm(Petal.Length ~ Sepal.Length, data=iris)
+ggplot(data=iris, aes(x=Sepal.Length, y=Petal.Length)) + geom_point() + geom_smooth(method="lm")
+
+
+iris$Petal.Width.Bin = cut(iris$Petal.Width, breaks=4, labels=c("tiny", "small", "large", "xlarge"))
+iris$Petal.Width.Bin = factor(iris$Petal.Width.Bin)
+ggplot(data=iris, aes(x=Species, y=Petal.Width.Bin)) + geom_jitter(aes(color=Petal.Width.Bin), width=0.2, height=0.2)
+
+chisq.test(x=iris$Species, y=iris$Petal.Width.Bin)
+
+
+
+
+
+
+
+
+
 
