@@ -125,8 +125,8 @@ chisq_iris
 
 #https://warwick.ac.uk/fac/sci/moac/people/students/peter_cock/r/iris_lm/
 # Linear Model
-lm(Petal.Length ~ Sepal.Length, data=iris)
-ggplot(data=iris, aes(x=Sepal.Length, y=Petal.Length)) + geom_point() + geom_smooth(method="lm")
+lm(Petal.Length ~ Petal.Width, data=iris)
+ggplot(data=iris, aes(x=Sepal.Length, y=Petal.Width)) + geom_point() + geom_smooth(method="lm")
 
 
 iris$Petal.Width.Bin = cut(iris$Petal.Width, breaks=4, labels=c("tiny", "small", "large", "xlarge"))
