@@ -15,6 +15,9 @@ pw = iris[["Petal.Width"]]  #Numeric
 sp = iris[["Species"]]      #Qualitative
 
 ## 1.2
+
+summary(iris)
+
 # Sepal Length
 summary(sl)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -123,6 +126,7 @@ chisq_iris
 
 
 
+
 #https://warwick.ac.uk/fac/sci/moac/people/students/peter_cock/r/iris_lm/
 # Linear Model
 lm(Petal.Length ~ Petal.Width, data=iris)
@@ -139,6 +143,44 @@ chisq.test(x=iris$Species, y=iris$Petal.Width.Bin)
 
 
 
+
+table(iris$Species) # is data.frame with 'Species' factor
+iS <- iris$Species == "setosa"
+iV <- iris$Species == "versicolor"
+op <- par(bg = "bisque")
+matplot(c(1, 8), c(0, 4.5), type =  "n", xlab = "Length", ylab = "Width",
+        main = "Petal and Sepal Dimensions in Iris Blossoms")
+matpoints(iris[iS,c(1,3)], iris[iS,c(2,4)], pch = "sS", col = c(2,4))
+matpoints(iris[iV,c(1,3)], iris[iV,c(2,4)], pch = "vV", col = c(2,4))
+legend(1, 4, c("    Setosa Petals", "    Setosa Sepals",
+               "Versicolor Petals", "Versicolor Sepals"),
+       pch = "sSvV", col = rep(c(2,4), 2))
+
+nam.var <- colnames(iris)[-5]
+nam.spec <- as.character(iris[1+50*0:2, "Species"])
+iris.S <- array(NA, dim = c(50,4,3),
+                dimnames = list(NULL, nam.var, nam.spec))
+for(i in 1:3) iris.S[,,i] <- data.matrix(iris[1:50+50*(i-1), -5])
+
+matplot(iris.S[, "Petal.Length",], iris.S[, "Petal.Width",], pch = "SCV",
+        col = rainbow(3, start = 0.8, end = 0.1),
+        sub = paste(c("S", "C", "V"), dimnames(iris.S)[[3]],
+                    sep = "=", collapse= ",  "),
+        main = "Fisher's Iris Data")
+par(op)
+
+library(tidyverse)
+library(cowplot)
+library(ggpubr)
+library(MASS)
+library(caret)
+
+set.seed(49) # crucial step for replication purposes.
+irissplit <- createDataPartition(iris$Species, p=.8, list=FALSE, times=1)
+train <- iris[irissplit, ]
+test <- iris[-irissplit, ]
+# confirm we have 30 rows x 5 variables in the train set (20% of 150)...
+dim(test)
 
 
 
